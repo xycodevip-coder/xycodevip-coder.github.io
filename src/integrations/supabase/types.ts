@@ -24,6 +24,8 @@ export type Database = {
           issue_date: string
           status: string
           student_name: string
+          student_email: string | null
+          task_delivered: boolean
           updated_at: string
         }
         Insert: {
@@ -35,6 +37,8 @@ export type Database = {
           issue_date?: string
           status?: string
           student_name: string
+          student_email?: string | null
+          task_delivered?: boolean
           updated_at?: string
         }
         Update: {
@@ -46,6 +50,8 @@ export type Database = {
           issue_date?: string
           status?: string
           student_name?: string
+          student_email?: string | null
+          task_delivered?: boolean
           updated_at?: string
         }
         Relationships: []
@@ -89,6 +95,48 @@ export type Database = {
           motivation?: string | null
           status?: string
           created_at?: string
+        }
+        Relationships: []
+      }
+      task_submissions: {
+        Row: {
+          id: string
+          application_id: string | null
+          full_name: string
+          email: string
+          track: string
+          submission_notes: string | null
+          github_submission_url: string | null
+          task_delivered: boolean
+          submitted_at: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+        }
+        Insert: {
+          id?: string
+          application_id?: string | null
+          full_name: string
+          email: string
+          track: string
+          submission_notes?: string | null
+          github_submission_url?: string | null
+          task_delivered?: boolean
+          submitted_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Update: {
+          id?: string
+          application_id?: string | null
+          full_name?: string
+          email?: string
+          track?: string
+          submission_notes?: string | null
+          github_submission_url?: string | null
+          task_delivered?: boolean
+          submitted_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
         }
         Relationships: []
       }
