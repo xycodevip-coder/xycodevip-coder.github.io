@@ -322,7 +322,8 @@ const Admin = () => {
         },
       });
       if (fnError) {
-        const detail = (data as any)?.error ?? fnError.message ?? String(fnError);
+        console.error("Certificate email fnError:", fnError, "data:", data);
+        const detail = (data as any)?.error ?? (typeof data === 'string' ? data : null) ?? fnError.message ?? String(fnError);
         throw new Error(detail);
       }
 
@@ -360,7 +361,8 @@ const Admin = () => {
         },
       });
       if (fnError) {
-        const detail = (data as any)?.error ?? fnError.message ?? String(fnError);
+        console.error("Resend certificate email fnError:", fnError, "data:", data);
+        const detail = (data as any)?.error ?? (typeof data === 'string' ? data : null) ?? fnError.message ?? String(fnError);
         throw new Error(detail);
       }
       const sentAt = new Date().toISOString();

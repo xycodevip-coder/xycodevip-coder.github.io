@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Github, Twitter, Linkedin, ExternalLink } from "lucide-react";
+import logoImg from "@/assets/logo-transparent.png";
 
 const Footer = () => (
   <footer className="relative border-t border-border/40 overflow-hidden">
@@ -11,9 +12,7 @@ const Footer = () => (
         {/* Logo & tagline */}
         <div className="flex flex-col items-center md:items-start gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
-              <span className="font-display font-bold text-white text-xs tracking-tight">XY</span>
-            </div>
+            <img src={logoImg} alt="XY CODE" className="w-9 h-9 object-contain" />
             <span className="font-display font-bold text-foreground text-lg">XY CODE</span>
           </div>
           <p className="text-muted-foreground text-xs max-w-xs text-center md:text-left leading-relaxed">

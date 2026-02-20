@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import Internships from "./pages/Internships";
 import TaskSubmission from "./pages/TaskSubmission";
+import InternPortal from "./pages/InternPortal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/internships" element={<Internships />} />
+            <Route path="/portal" element={<InternPortal />} />
             <Route path="/task-submission" element={<TaskSubmission />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

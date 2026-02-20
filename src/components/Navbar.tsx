@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Shield, Sparkles } from "lucide-react";
+import { Menu, X, Shield, Sparkles, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
+import logoImg from "@/assets/logo-transparent.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,12 +39,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="relative w-10 h-10">
-            <div className="absolute inset-0 bg-gradient-primary rounded-xl opacity-80 group-hover:opacity-100 transition-opacity shadow-glow" />
-            <div className="relative w-10 h-10 flex items-center justify-center">
-              <span className="font-display font-bold text-white text-sm tracking-tight">XY</span>
-            </div>
-          </div>
+          <img src={logoImg} alt="XY CODE" className="w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-200" />
           <span className="font-display font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-200">
             XY CODE
           </span>
@@ -65,8 +61,9 @@ const Navbar = () => {
             Internships
             <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-primary rounded-full group-hover:w-5 transition-all duration-300" />
           </Link>
-          <Link to="/task-submission" className={navLinkClass}>
-            Submit Task
+          <Link to="/portal" className={navLinkClass}>
+            <GraduationCap className="w-4 h-4 inline mr-1" />
+            Intern Portal
             <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-primary rounded-full group-hover:w-5 transition-all duration-300" />
           </Link>
         </div>
@@ -121,11 +118,12 @@ const Navbar = () => {
             Internships
           </Link>
           <Link
-            to="/task-submission"
+            to="/portal"
             onClick={() => setIsOpen(false)}
             className="block px-4 py-3 text-sm font-medium text-foreground/70 hover:text-primary transition-colors duration-200 rounded-xl"
           >
-            Submit Task
+            <GraduationCap className="w-4 h-4 inline mr-1" />
+            Intern Portal
           </Link>
           <div className="pt-2 border-t border-border/40">
             <Link to="/verify" onClick={() => setIsOpen(false)}>
