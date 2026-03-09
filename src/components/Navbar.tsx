@@ -66,6 +66,10 @@ const Navbar = () => {
             Intern Portal
             <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-primary rounded-full group-hover:w-5 transition-all duration-300" />
           </Link>
+          <Link to="/privacy-policy" className={navLinkClass}>
+            Privacy Policy
+            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-primary rounded-full group-hover:w-5 transition-all duration-300" />
+          </Link>
         </div>
 
         {/* Desktop Actions */}
@@ -124,6 +128,13 @@ const Navbar = () => {
           >
             <GraduationCap className="w-4 h-4 inline mr-1" />
             Intern Portal
+          </Link>
+          <Link
+            to="/privacy-policy"
+            onClick={() => setIsOpen(false)}
+            className="block px-4 py-3 text-sm font-medium text-foreground/70 hover:text-primary transition-colors duration-200 rounded-xl"
+          >
+            Privacy Policy
           </Link>
           <div className="pt-2 border-t border-border/40">
             <Link to="/verify" onClick={() => setIsOpen(false)}>
