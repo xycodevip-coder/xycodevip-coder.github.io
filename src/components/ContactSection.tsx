@@ -20,15 +20,15 @@ const contacts = [
     bg: "from-rose-500/15 to-rose-500/5",
     border: "hover:border-rose-400/40",
   },
-  {
-    icon: Phone,
-    title: "Support",
-    value: "Available via email",
-    href: "mailto:contact@xycode.tech",
-    color: "text-cyan-500 dark:text-cyan-400",
-    bg: "from-cyan-500/15 to-cyan-500/5",
-    border: "hover:border-cyan-400/40",
-  },
+{
+  icon: Phone,
+  title: "Phone",
+  value: "+1 (447) 287-1867",
+  href: "tel:+14472871867",
+  color: "text-cyan-500 dark:text-cyan-400",
+  bg: "from-cyan-500/15 to-cyan-500/5",
+  border: "hover:border-cyan-400/40",
+}
 ];
 
 const ContactSection = () => {
