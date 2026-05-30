@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import nodemailer from "npm:nodemailer@6.9.13";
 
@@ -77,6 +76,12 @@ serve(async (req: Request) => {
     .info-value { font-weight: 600; color: #333; }
     .btn-row { text-align: center; margin: 28px 0; }
     .btn-primary { background: linear-gradient(135deg, #6C63FF, #3B82F6); color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; display: inline-block; margin: 6px 8px; }
+    .btn-verify { background: linear-gradient(135deg, #8b5cf6, #a855f7); color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; display: inline-block; margin: 6px 8px; }
+    .unlock-notice { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 10px; padding: 20px 24px; margin: 24px 0; text-align: center; }
+    .unlock-notice h3 { color: #92400e; font-size: 16px; margin: 0 0 8px; font-weight: 700; }
+    .unlock-notice p { color: #78350f; font-size: 14px; margin: 0; line-height: 1.5; }
+    .steps { text-align: left; margin: 16px 0; padding-left: 8px; }
+    .steps li { color: #555; font-size: 14px; line-height: 1.8; }
     .footer { background: #f8f9fa; padding: 20px 32px; text-align: center; font-size: 13px; color: #aaa; border-top: 1px solid #eee; }
     .congrats { font-size: 18px; color: #333; font-weight: 600; margin-bottom: 12px; }
     p { color: #555; line-height: 1.6; font-size: 15px; }
@@ -122,19 +127,25 @@ serve(async (req: Request) => {
         </div>
       </div>
 
-      <p>
-        Your certificate is ready for download. Visit the Intern Portal or the verification page to view and download your official certificate as a PDF.
-      </p>
+      <div class="unlock-notice">
+        <h3>🔓 Unlock Your Certificate</h3>
+        <p>Your official certificate is ready! To view and download it, please complete the following steps:</p>
+        <ol class="steps">
+          <li>Log in to the <strong>Intern Portal</strong> using your email</li>
+          <li>Complete the secure payment to unlock your certificate</li>
+          <li>Download your official certificate as a PDF</li>
+        </ol>
+      </div>
 
       <div class="btn-row">
         <a href="${portalUrl}" class="btn-primary">
-          Visit Intern Portal
+          Go to Intern Portal — Unlock Certificate
         </a>
       </div>
 
       <div class="btn-row">
-        <a href="${verifyUrl}" class="btn-primary" style="background: linear-gradient(135deg, #8b5cf6, #a855f7);">
-          Download Certificate
+        <a href="${verifyUrl}" class="btn-verify">
+          Verify Certificate Authenticity
         </a>
       </div>
 

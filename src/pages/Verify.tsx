@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import {
   Shield,
   Search,
@@ -10,6 +10,9 @@ import {
   Download,
   Award,
   Printer,
+  Lock,
+  CreditCard,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +27,9 @@ interface CertificateResult {
   internship_title: string;
   issue_date: string;
   status: string;
+  payment_status: string;
+  student_email: string;
+  id: string;
 }
 
 // ─── Image to base64 helper ─────────────────────────────────────────────────
@@ -288,6 +294,8 @@ const Verify = () => {
     await handleVerifyWithNumber(trimmed);
   };
 
+  const isPaid = result?.payment_status === "paid";
+
   const handleVerifyWithNumber = async (certNumber: string) => {
     setLoading(true);
     setSearched(true);
@@ -297,7 +305,7 @@ const Verify = () => {
     const { data } = await supabase
       .from("certificates")
       .select(
-        "certificate_number, student_name, internship_title, issue_date, status"
+        "id, certificate_number, student_name, student_email, internship_title, issue_date, status, payment_status"
       )
       .eq("certificate_number", certNumber.trim())
       .maybeSingle();
@@ -305,8 +313,8 @@ const Verify = () => {
     setResult(data);
     setLoading(false);
 
-    // Auto-show certificate if coming from email link
-    if (data && searchParams.get("cert")) {
+    // Auto-show certificate only if payment is confirmed
+    if (data && searchParams.get("cert") && data.payment_status === "paid") {
       setShowCertificate(true);
     }
   };
@@ -423,59 +431,91 @@ const Verify = () => {
                   </div>
                 </div>
 
-                {/* Download buttons */}
-                <div className="flex gap-3">
-                  <Button
-                    onClick={handleDownloadCertificate}
-                    className="flex-1 bg-gradient-to-r from-[hsl(258,85%,62%)] to-[hsl(230,85%,62%)] text-white hover:opacity-90 font-semibold shadow-lg"
-                  >
-                    <Award className="w-4 h-4 mr-2" />
-                    View Certificate
-                  </Button>
-                  <Button
-                    onClick={handleOpenPrintView}
-                    variant="outline"
-                    className="font-semibold"
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
-                  </Button>
-                </div>
-
-                {/* Certificate preview */}
-                {showCertificate && (
-                  <div className="mt-6 animate-fade-in">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-display font-bold text-foreground flex items-center gap-2">
-                        <Award className="w-5 h-5 text-primary" />
-                        Certificate Preview
-                      </h3>
+                {/* Payment-gated download section */}
+                {isPaid ? (
+                  <>
+                    {/* Download buttons - only shown when paid */}
+                    <div className="flex gap-3">
                       <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={handleOpenPrintView}
-                        className="text-muted-foreground hover:text-foreground"
+                        onClick={handleDownloadCertificate}
+                        className="flex-1 bg-gradient-to-r from-[hsl(258,85%,62%)] to-[hsl(230,85%,62%)] text-white hover:opacity-90 font-semibold shadow-lg"
                       >
-                        <Printer className="w-4 h-4 mr-1" />
-                        Open Full Size
+                        <Award className="w-4 h-4 mr-2" />
+                        View Certificate
+                      </Button>
+                      <Button
+                        onClick={handleOpenPrintView}
+                        variant="outline"
+                        className="font-semibold"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download PDF
                       </Button>
                     </div>
-                    <div
-                      className="rounded-xl overflow-hidden border border-border shadow-lg"
-                      style={{ aspectRatio: "1100/778" }}
-                    >
-                      <iframe
-                        ref={certFrameRef}
-                        srcDoc={generateCertificatePDF(result, logoB64, sig1B64, sig2B64)}
-                        className="w-full h-full border-0"
-                        title="Certificate Preview"
-                      />
+
+                    {/* Certificate preview */}
+                    {showCertificate && (
+                      <div className="mt-6 animate-fade-in">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="font-display font-bold text-foreground flex items-center gap-2">
+                            <Award className="w-5 h-5 text-primary" />
+                            Certificate Preview
+                          </h3>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={handleOpenPrintView}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <Printer className="w-4 h-4 mr-1" />
+                            Open Full Size
+                          </Button>
+                        </div>
+                        <div
+                          className="rounded-xl overflow-hidden border border-border shadow-lg"
+                          style={{ aspectRatio: "1100/778" }}
+                        >
+                          <iframe
+                            ref={certFrameRef}
+                            srcDoc={generateCertificatePDF(result, logoB64, sig1B64, sig2B64)}
+                            className="w-full h-full border-0"
+                            title="Certificate Preview"
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-3 text-center">
+                          Click "Download PDF" to open in a new tab. Use your
+                          browser's <strong>Print → Save as PDF</strong> to save
+                          the certificate.
+                        </p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  /* Payment required notice */
+                  <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-6 animate-fade-in">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center flex-shrink-0">
+                        <Lock className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-bold text-foreground text-base">
+                          Payment Required
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          This certificate has not been unlocked yet.
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-3 text-center">
-                      Click "Download PDF" to open in a new tab. Use your
-                      browser's <strong>Print → Save as PDF</strong> to save
-                      the certificate.
+                    <p className="text-sm text-muted-foreground mb-4 ml-13">
+                      To view and download the official certificate, please log in to the intern portal and complete the payment process.
                     </p>
+                    <Button
+                      onClick={() => window.location.href = "/portal"}
+                      className="w-full bg-gradient-primary text-white border-0 shadow-glow hover:opacity-90 transition-all font-semibold"
+                    >
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      Go to Intern Portal to Pay
+                    </Button>
                   </div>
                 )}
               </div>
