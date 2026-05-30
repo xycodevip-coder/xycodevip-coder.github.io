@@ -23,6 +23,19 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
+  <script>
+    (function () {
+      const url = new URL(window.location.href);
+      const redirect = url.searchParams.get("redirect");
+      if (!redirect) return;
+
+      url.searchParams.delete("redirect");
+      const restoredPath = decodeURIComponent(redirect);
+      const restoredUrl = restoredPath + url.search + url.hash;
+
+      window.history.replaceState(null, "", restoredUrl);
+    })();
+  </script>
 </head>
 
 <body>
