@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XY CODE</title>
+  <meta name="description" content="XY CODE - Page not found" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script>
+    const spaRoutes = new Set([
+      "/",
+      "/verify",
+      "/auth",
+      "/admin",
+      "/internships",
+      "/portal",
+      "/task-submission",
+      "/privacy-policy",
+    ]);
+
+    if (spaRoutes.has(window.location.pathname)) {
+      sessionStorage.redirect =
+        window.location.pathname + window.location.search + window.location.hash;
+      window.location.replace("/");
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --background: hsl(220 30% 96%);
+      --foreground: hsl(220 30% 10%);
+      --muted-foreground: hsl(220 15% 45%);
+      --border: hsla(220, 20%, 85%, 0.7);
+      --primary: hsl(258 85% 62%);
+      --accent: hsl(316 85% 62%);
+      --secondary: hsl(190 85% 48%);
+      --glass-bg: rgba(255, 255, 255, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --glass-shadow: 0 16px 48px rgba(100, 80, 200, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Outfit', sans-serif;
+      color: var(--foreground);
+      background:
+        radial-gradient(ellipse at 15% 25%, hsl(258 85% 62% / 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 70%, hsl(316 85% 62% / 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse at 45% 85%, hsl(190 85% 48% / 0.06) 0%, transparent 50%),
+        var(--background);
+      overflow-x: hidden;
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(80px);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .orb-primary {
+      width: 20rem;
+      height: 20rem;
+      top: 4rem;
+      left: -6rem;
+      background: radial-gradient(circle, hsl(258 85% 62% / 0.35), transparent 70%);
+    }
+
+    .orb-accent {
+      width: 22rem;
+      height: 22rem;
+      right: -6rem;
+      bottom: 2rem;
+      background: radial-gradient(circle, hsl(316 85% 62% / 0.3), transparent 70%);
+    }
+
+    .orb-cyan {
+      width: 18rem;
+      height: 18rem;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, hsl(190 85% 48% / 0.22), transparent 70%);
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1100px, calc(100% - 2rem));
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 0 3rem;
+    }
+
+    .card {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2rem;
+      padding: 2rem;
+      border-radius: 2rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, hsl(258 85% 62% / 0.1), transparent 45%, hsl(316 85% 62% / 0.12));
+      pointer-events: none;
+    }
+
+    .content,
+    .panel {
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 999px;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      margin-bottom: 1rem;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 8vw, 5.8rem);
+      line-height: 1.02;
+      margin-bottom: 1rem;
+    }
+
+    .gradient {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      line-height: 1.75;
+      color: var(--muted-foreground);
+      margin: 0 0 1rem;
+      max-width: 38rem;
+    }
+
+    .path {
+      margin: 0 0 2rem;
+      color: var(--muted-foreground);
+      font-size: 0.95rem;
+    }
+
+    .path strong {
+      color: var(--foreground);
+      word-break: break-word;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      min-height: 3rem;
+      padding: 0.85rem 1.3rem;
+      border-radius: 0.95rem;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 0 30px -5px hsl(258 85% 62% / 0.5), 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-secondary {
+      color: var(--foreground);
+      background: rgba(255, 255, 255, 0.24);
+      border: 1px solid var(--border);
+    }
+
+    .links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .link-card {
+      border-radius: 1.2rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-3px);
+      border-color: hsl(258 85% 62% / 0.35);
+    }
+
+    .link-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .link-card p {
+      margin: 0;
+      color: var(--muted-foreground);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .panel-box {
+      height: 100%;
+      border-radius: 1.8rem;
+      padding: 1.75rem;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+
+    .icon-box {
+      width: 5rem;
+      height: 5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1.5rem;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 0 30px -5px hsl(258 85% 62% / 0.5), 0 4px 16px rgba(0, 0, 0, 0.15);
+      margin-bottom: 1.25rem;
+      font-size: 2rem;
+    }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: hsl(258 85% 52%);
+      margin: 0 0 0.75rem;
+    }
+
+    .big-404 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(5rem, 16vw, 7rem);
+      line-height: 0.95;
+      font-weight: 700;
+      margin: 0 0 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 1rem 0 1.25rem;
+    }
+
+    .tips {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      color: var(--muted-foreground);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .dot {
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 999px;
+      margin-top: 0.45rem;
+      flex: none;
+    }
+
+    .dot-primary { background: var(--primary); }
+    .dot-accent { background: var(--accent); }
+    .dot-secondary { background: var(--secondary); }
+
+    @media (max-width: 900px) {
+      .card {
+        grid-template-columns: 1fr;
+      }
+
+      .links {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 1rem, 1100px);
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+
+      .card {
+        padding: 1.25rem;
+        border-radius: 1.5rem;
+      }
+
+      .panel-box {
+        border-radius: 1.35rem;
+        padding: 1.25rem;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb-primary"></div>
+  <div class="orb orb-accent"></div>
+  <div class="orb orb-cyan"></div>
+
+  <main class="page">
+    <section class="card">
+      <div class="content">
+        <div class="badge">404 Error</div>
+        <h1>Lost in the <span class="gradient">codebase</span></h1>
+        <p class="lead">
+          The page you requested does not exist, may have moved, or the link may be incomplete.
+        </p>
+        <p class="path">
+          Requested path:
+          <strong id="requested-path"></strong>
+        </p>
+
+        <div class="actions">
+          <a class="btn btn-primary" href="/">Return Home</a>
+          <a class="btn btn-secondary" href="/portal">Open Portal</a>
+        </div>
+
+        <div class="links">
+          <a class="link-card" href="/internships">
+            <h3>Explore Internships</h3>
+            <p>Start from the opportunities page and continue your application.</p>
+          </a>
+          <a class="link-card" href="/verify">
+            <h3>Verify Certificate</h3>
+            <p>If you came for validation, jump directly to certificate verification.</p>
+          </a>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <div class="panel-box">
+          <div class="icon-box">X</div>
+          <p class="eyebrow">XY CODE</p>
+          <p class="big-404">404</p>
+          <div class="divider"></div>
+
+          <div class="tips">
+            <div class="tip">
+              <span class="dot dot-primary"></span>
+              <span>Double-check the URL for typos or outdated bookmarks.</span>
+            </div>
+            <div class="tip">
+              <span class="dot dot-accent"></span>
+              <span>Use the main navigation to jump back into the site.</span>
+            </div>
+            <div class="tip">
+              <span class="dot dot-secondary"></span>
+              <span>If this link should exist, it may need a route or deploy update.</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById("requested-path").textContent =
+      window.location.pathname + window.location.search + window.location.hash;
+  </script>
+</body>
+</html>
