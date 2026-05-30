@@ -11,6 +11,7 @@ import Admin from "./pages/Admin";
 import Internships from "./pages/Internships";
 import TaskSubmission from "./pages/TaskSubmission";
 import InternPortal from "./pages/InternPortal";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/internships" element={<Internships />} />
             <Route path="/portal" element={<InternPortal />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/task-submission" element={<TaskSubmission />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />

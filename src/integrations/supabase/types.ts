@@ -27,6 +27,11 @@ export type Database = {
           student_email: string | null
           task_delivered: boolean
           updated_at: string
+          payment_status: string
+          stripe_session_id: string | null
+          payment_completed_at: string | null
+          stripe_customer_id: string | null
+          payment_amount: number | null
         }
         Insert: {
           certificate_number: string
@@ -40,6 +45,11 @@ export type Database = {
           student_email?: string | null
           task_delivered?: boolean
           updated_at?: string
+          payment_status?: string
+          stripe_session_id?: string | null
+          payment_completed_at?: string | null
+          stripe_customer_id?: string | null
+          payment_amount?: number | null
         }
         Update: {
           certificate_number?: string
@@ -53,6 +63,11 @@ export type Database = {
           student_email?: string | null
           task_delivered?: boolean
           updated_at?: string
+          payment_status?: string
+          stripe_session_id?: string | null
+          payment_completed_at?: string | null
+          stripe_customer_id?: string | null
+          payment_amount?: number | null
         }
         Relationships: []
       }

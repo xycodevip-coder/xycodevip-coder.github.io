@@ -140,13 +140,19 @@ const InternPortal = () => {
 
     // Certificate
     interface CertificateData {
+        id: string;
         certificate_number: string;
         student_name: string;
         internship_title: string;
         issue_date: string;
         status: string;
+        payment_status: string;
     }
     const [certificate, setCertificate] = useState<CertificateData | null>(null);
+    const [checkingPayment, setCheckingPayment] = useState(false);
+    const [initiatingPayment, setInitiatingPayment] = useState(false);
+    const [downloadAuthorized, setDownloadAuthorized] = useState(false);
+    const [verifyingDownload, setVerifyingDownload] = useState(false);
 
     // Submission form
     const [formData, setFormData] = useState({
@@ -211,13 +217,17 @@ const InternPortal = () => {
             // Check if certificate exists
             const { data: certData } = await supabase
                 .from("certificates")
-                .select("certificate_number, student_name, internship_title, issue_date, status")
+                .select("id, certificate_number, student_name, internship_title, issue_date, status, payment_status")
                 .eq("student_email", s.email)
                 .eq("status", "active")
                 .limit(1)
                 .maybeSingle();
             if (certData) {
-                setCertificate(certData);
+                setCertificate(certData as CertificateData);
+                // If payment is already confirmed, authorize download
+                if (certData.payment_status === "paid") {
+                    setDownloadAuthorized(true);
+                }
             }
         },
         []
@@ -484,6 +494,136 @@ const InternPortal = () => {
     const getTrackIcon = (trackTitle: string) => {
         const track = internshipTracks.find((t) => t.title === trackTitle);
         return track ? track.icon : BookOpen;
+    };
+
+    // ── Payment: Initiate Stripe Checkout ────────────────────────────────
+    const handleInitiatePayment = async () => {
+        if (!certificate || !session) return;
+        setInitiatingPayment(true);
+        try {
+            const { data, error } = await supabase.functions.invoke(
+                "create-checkout-session",
+                {
+                    body: {
+                        certificate_id: certificate.id,
+                        student_email: session.email,
+                        student_name: session.full_name,
+                        certificate_number: certificate.certificate_number,
+                    },
+                }
+            );
+
+            if (error) throw new Error(error.message || "Failed to create checkout session");
+
+            if (data?.already_paid) {
+                setDownloadAuthorized(true);
+                toast({ title: "Already Paid", description: "Your certificate is ready for download." });
+                return;
+            }
+
+            if (data?.url) {
+                // Redirect to Stripe Checkout
+                window.location.href = data.url;
+            } else {
+                throw new Error("No checkout URL received");
+            }
+        } catch (err: any) {
+            toast({
+                title: "Payment Error",
+                description: err.message || "Failed to initiate payment. Please try again.",
+                variant: "destructive",
+            });
+        } finally {
+            setInitiatingPayment(false);
+        }
+    };
+
+    // ── Payment: Check payment status ────────────────────────────────────
+    const handleCheckPayment = async () => {
+        if (!certificate || !session) return;
+        setCheckingPayment(true);
+        try {
+            const { data, error } = await supabase.functions.invoke(
+                "check-payment-status",
+                {
+                    body: {
+                        certificate_id: certificate.id,
+                        student_email: session.email,
+                    },
+                }
+            );
+
+            if (error) throw new Error(error.message || "Failed to check payment status");
+
+            if (data?.paid) {
+                setDownloadAuthorized(true);
+                setCertificate({ ...certificate, payment_status: "paid" });
+                toast({ title: "Payment Confirmed! ✅", description: "You can now download your certificate." });
+            } else {
+                toast({
+                    title: "Payment Pending",
+                    description: "Payment has not been confirmed yet. Please wait a moment or complete the payment first.",
+                    variant: "destructive",
+                });
+            }
+        } catch (err: any) {
+            toast({
+                title: "Error",
+                description: err.message || "Failed to check payment status.",
+                variant: "destructive",
+            });
+        } finally {
+            setCheckingPayment(false);
+        }
+    };
+
+    // ── Certificate: Secure download ─────────────────────────────────────
+    const handleSecureDownload = async () => {
+        if (!certificate || !session) return;
+        setVerifyingDownload(true);
+        try {
+            const { data, error } = await supabase.functions.invoke(
+                "generate-certificate-download",
+                {
+                    body: {
+                        certificate_id: certificate.id,
+                        student_email: session.email,
+                    },
+                }
+            );
+
+            if (error) {
+                if (error.message?.includes("403") || error.message?.includes("Payment")) {
+                    toast({
+                        title: "Payment Required",
+                        description: "Please complete the payment first to download your certificate.",
+                        variant: "destructive",
+                    });
+                    setDownloadAuthorized(false);
+                    return;
+                }
+                throw new Error(error.message || "Download authorization failed");
+            }
+
+            if (data?.download_enabled) {
+                // Redirect to verify page with the certificate number for PDF generation
+                window.open(`/verify?cert=${certificate.certificate_number}`, "_blank");
+            } else {
+                toast({
+                    title: "Download Denied",
+                    description: "Payment verification failed. Please try again.",
+                    variant: "destructive",
+                });
+            }
+        } catch (err: any) {
+            toast({
+                title: "Download Error",
+                description: err.message || "Failed to verify download permissions.",
+                variant: "destructive",
+            });
+        } finally {
+            setVerifyingDownload(false);
+        }
     };
 
     const isLoggedIn = session && authStep === "dashboard";
@@ -1016,10 +1156,9 @@ const InternPortal = () => {
                                 )}
                             </div>
 
-                            {/* ── Certificate section ─────────────────────────────── */}
+                            {/* ── Certificate section (Payment-Gated) ──────────── */}
                             {certificate && (
                                 <div className="bg-card border-2 border-primary/30 rounded-2xl p-8 shadow-lg relative overflow-hidden">
-                                    {/* Background decoration */}
                                     <div className="absolute top-0 right-0 w-48 h-48 opacity-5 pointer-events-none" style={{ background: 'radial-gradient(circle, hsl(258, 85%, 62%) 0%, transparent 70%)' }} />
 
                                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -1032,7 +1171,9 @@ const InternPortal = () => {
                                                     🎓 Your Certificate is Ready!
                                                 </h3>
                                                 <p className="text-muted-foreground text-sm mb-3">
-                                                    Congratulations! You have successfully passed and qualified.
+                                                    {downloadAuthorized
+                                                        ? "Payment confirmed! You can now download your official certificate."
+                                                        : "Complete the payment below to unlock your certificate download."}
                                                 </p>
                                                 <div className="space-y-1.5 text-sm">
                                                     <div className="flex items-center gap-2">
@@ -1044,24 +1185,55 @@ const InternPortal = () => {
                                                         <span className="font-medium text-foreground">{certificate.internship_title}</span>
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-muted-foreground">Issued:</span>
-                                                        <span className="font-medium text-foreground">
-                                                            {new Date(certificate.issue_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                        <span className="text-muted-foreground">Status:</span>
+                                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${downloadAuthorized ? 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400'}`}>
+                                                            {downloadAuthorized ? <><CheckCircle2 className="w-3 h-3" /> Paid</> : <><Clock className="w-3 h-3" /> Payment Required</>}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex gap-3 shrink-0">
-                                            <a
-                                                href={`/verify?cert=${certificate.certificate_number}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold shadow-lg hover:opacity-90 transition-all text-sm"
-                                            >
-                                                <Download className="w-4 h-4" />
-                                                Download Certificate
-                                            </a>
+                                        <div className="flex flex-col gap-3 shrink-0 w-full md:w-auto">
+                                            {downloadAuthorized ? (
+                                                <Button
+                                                    onClick={handleSecureDownload}
+                                                    disabled={verifyingDownload}
+                                                    className="bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold shadow-lg hover:opacity-90 transition-all"
+                                                >
+                                                    {verifyingDownload ? (
+                                                        <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</>
+                                                    ) : (
+                                                        <><Download className="w-4 h-4 mr-2" /> Download Certificate</>
+                                                    )}
+                                                </Button>
+                                            ) : (
+                                                <>
+                                                    <Button
+                                                        onClick={handleInitiatePayment}
+                                                        disabled={initiatingPayment}
+                                                        className="bg-gradient-to-r from-[hsl(258,85%,62%)] to-[hsl(316,85%,62%)] text-white font-semibold shadow-lg hover:opacity-90 transition-all"
+                                                    >
+                                                        {initiatingPayment ? (
+                                                            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
+                                                        ) : (
+                                                            <><Award className="w-4 h-4 mr-2" /> Pay & Download Certificate</>
+                                                        )}
+                                                    </Button>
+                                                    <Button
+                                                        onClick={handleCheckPayment}
+                                                        disabled={checkingPayment}
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="text-muted-foreground"
+                                                    >
+                                                        {checkingPayment ? (
+                                                            <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Checking...</>
+                                                        ) : (
+                                                            <><RefreshCw className="w-3 h-3 mr-1" /> I already paid</>
+                                                        )}
+                                                    </Button>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
